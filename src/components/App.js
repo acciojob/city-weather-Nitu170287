@@ -3,23 +3,29 @@ import "./../styles/App.css";
 
 const App = () => {
   const [cityName, setCityName] = useState("");
-  const [weather, setWeather] = useState();
+  const [weather, setWeather] = useState({});
 
   useEffect(() => {
     weatherInfo();
   }, [cityName]);
 
   const weatherInfo = () => {
-    fetch(
-      `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=7c6752fa195f26616f7223b785694963`
-    )
-      .then((response) => {
-        response.json().then((data) => {
-          setWeather(data);
-          console.log(weather);
-        });
-      })
-      .catch((err) => console.error(err));
+    if (cityName) {
+      fetch(
+        `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=7c6752fa195f26616f7223b785694963`
+      )
+        .then((response) => {
+          response.json().then((data) => {
+            if (data.cod && data.cod !== "404") {
+              setWeather(data);
+              setCityName("");
+            }
+
+            console.log(weather);
+          });
+        })
+        .catch((err) => console.error(err));
+    }
   };
 
   console.log(cityName);
@@ -33,6 +39,7 @@ const App = () => {
           setCityName(e.target.value);
         }}
         placeholder="Enter a city"
+        value={cityName}
       />
       {weather ? (
         <div className="weather">
